@@ -1,0 +1,9 @@
+name: stripe_payments
+env:
+  - STRIPE_SECRET_KEY
+  - STRIPE_WEBHOOK_SECRET
+templates:
+  - target: app/routes/payment_routes.py
+    template: stripe_routes.py.jinja
+  - target: app/webhooks.py
+    template: stripe_webhooks.py.jinja

@@ -1,0 +1,28 @@
+# Stripe Checkout endpoints (real)
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
+import os
+
+router = APIRouter(prefix="/payments", tags=["payments"])
+
+class CheckoutRequest(BaseModel):
+    price_id: str
+    success_url: str = "https://example.com/success"
+    cancel_url: str = "https://example.com/cancel"
+
+@router.post("/create-checkout-session")
+def create_checkout_session(req: CheckoutRequest):
+    try:
+        import stripe
+        stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+        if not stripe.api_key:
+            raise HTTPException(status_code=400, detail="STRIPE_SECRET_KEY not set")
+        session = stripe.checkout.Session.create(
+            mode="subscription",
+            line_items=[{"price": req.price_id, "quantity": 1}],
+            success_url=req.success_url + "?session_id={CHECKOUT_SESSION_ID}",
+            cancel_url=req.cancel_url,
+        )
+        return {"id": session.id, "url": session.url}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

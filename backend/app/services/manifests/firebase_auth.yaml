@@ -1,0 +1,10 @@
+name: firebase_auth
+env:
+  - FIREBASE_PROJECT_ID
+  - FIREBASE_CLIENT_EMAIL
+  - FIREBASE_PRIVATE_KEY
+templates:
+  - target: app/routes/auth_routes.py
+    template: firebase_auth.py.jinja
+  - target: app/firebase_admin.py
+    template: firebase_admin_setup.py.jinja

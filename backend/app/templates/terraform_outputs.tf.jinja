@@ -1,0 +1,4 @@
+output "service_url" {
+  description = "Deployed Cloud Run URL"
+  value       = google_cloud_run_v2_service.app.uri
+}

@@ -1,0 +1,16 @@
+# Firebase Auth routes
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
+from ..firebase_admin import verify_id_token
+
+router = APIRouter(prefix="/auth", tags=["auth"])
+
+class LoginRequest(BaseModel):
+    id_token: str
+
+@router.post("/login")
+def login(req: LoginRequest):
+    decoded = verify_id_token(req.id_token)
+    if not decoded:
+        raise HTTPException(status_code=401, detail="Invalid Firebase ID token")
+    return {"status": "ok", "uid": decoded.get("uid")}

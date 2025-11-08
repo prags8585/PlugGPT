@@ -1,0 +1,27 @@
+from fastapi import FastAPI
+from dotenv import load_dotenv
+
+load_dotenv()
+
+app = FastAPI(title="{{ project_name }}")
+
+try:
+    from .routes import auth_routes
+    app.include_router(auth_routes.router)
+except Exception:
+    pass
+
+try:
+    from .routes import payment_routes
+    app.include_router(payment_routes.router)
+except Exception:
+    pass
+
+try:
+    from . import webhooks
+except Exception:
+    pass
+
+@app.get("/")
+def root():
+    return {"ok": True, "app": "{{ project_name }}"}
